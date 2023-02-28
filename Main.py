@@ -1,4 +1,4 @@
-import random
+import random, House, Player
 
 SUITES = ["Spade", "Club", "Diamond", "Heart"]
 GROUPS = [
@@ -13,32 +13,6 @@ REWARD = 20
 JOIN_FEE = 25
 WIN_CONDITION = 1000
 LOSE_CONDITION = 30
-
-class Player:
-    def __init__(self, name, score = 60):
-        self.name = name
-        self.score = score
-        self.card = None
-
-    def guess(self, house_card):
-        guess = input(f"{self.name}, do you think your card is greater or less "
-                      f"than {house_card[1]} {house_card[0]}? (Enter 'greater' or 'less'): ")
-        return guess
-    
-    def draw_card(self, deck):
-        self.card = random.choice(deck)
-        deck.remove(self.card)
-        print(f"{self.name} draws {self.card[1]} {self.card[0]}.")
-
-
-class House:
-    def __init__(self):
-        self.card = None
-
-    def draw_card(self, deck):
-        self.card = random.choice(deck)
-        deck.remove(self.card)
-        print(f"House draws {self.card[1]} {self.card[0]}.")
 
 
 # COMPARE CARDS
@@ -68,6 +42,7 @@ def compare_cards(player_card, house_card):
             return "greater"
         else:
             return "less"
+        
 # PLAY ROUND
 def round_play(player, house, deck, reward):
     player.draw_card(deck)
@@ -75,6 +50,7 @@ def round_play(player, house, deck, reward):
     result = compare_cards(player.card, house.card)
     guess = player.guess(house.card)
     if result == guess:
+        print(f"{player.name} draws {player.card[1]} {player.card[0]}.")
         print(f"Correct! {player.name} wins {reward} score."
                f"Total score: {player.score}.")
         return reward
@@ -83,35 +59,59 @@ def round_play(player, house, deck, reward):
             reward = 0
         else:
             reward = int(reward/2)
+        print(f"{player.name} draws {player.card[1]} {player.card[0]}.")
         print(f"Wrong! {player.name} loses {reward} score."
                 f"Total score: {player.score}.")
         return 0
 # 
 def play_game(player, house, deck, reward = REWARD):
-    round = 0
+    reward_round = reward
+    round = 1
+    #
     while player.score < WIN_CONDITION and player.score >= LOSE_CONDITION:
         print(f'{player.name} starts withs {player.score} score.')
         player.score -= JOIN_FEE
         print(f'{player.name} pays {JOIN_FEE} score.')
         # 
-        while True and round < WIN_CONDITION:
-            round = round_play(player, house, deck, reward)
+        while True and reward_round < WIN_CONDITION:
+            print(f'ROUND {round} : {reward} score.')
+            reward_round = round_play(player, house, deck, reward)
+            #
+            if reward_round == 0:
+                while True:
+                    decision = input('Do you want play game "yes" or "no" ? (y/n) : ')
+                    #
+                    if decision == "y":
+                       print("\n")
+                       reward = REWARD
+                       break
+                    elif decision == "n":
+                       exit()
+                    else:
+                       print("Please enter 'y' or 'n'")
+                break
+            #
             decision = input('Do you want to "continue" or "stop" ? : ')
+            print("\n")
             #
             if(decision == "continue"):
-                if round == 0:
+                if reward_round == 0:
                     reward = REWARD
+                    round = 1
                 else:
                     reward *= 2
+                    round += 1
                 deck = DECK
             #
             else:
-                player.score += round
+                round = 1
+                player.score += reward_round
                 print(f"You stop with {player.score} score")
                 while True:
                     decision = input('Do you want play game "yes" or "no" ? (y/n) : ')
                     #
                     if decision == "y":
+                       print("\n")
                        reward = REWARD
                        break
                     elif decision == "n":
@@ -121,7 +121,8 @@ def play_game(player, house, deck, reward = REWARD):
                 break
         #
         else:
-            player.score += round
+            player.score += reward_round
+    #
     else:
         #
         if player.score >= WIN_CONDITION:
@@ -135,7 +136,7 @@ def play_game(player, house, deck, reward = REWARD):
 
 
 def main():
-    play_game(Player("M"),house=House(),deck=DECK)
+    play_game(Player.Player("M"),house=House.House(),deck=DECK)
 
 if __name__ == "__main__":
     main()
