@@ -14,7 +14,7 @@ class GameController():
             decision = input('Do you want start game "yes" or "no" ? (y/n) : ')
             if decision == "y":
                 if(self.__player.get_score() < 25):
-                    print("you dont have enough 25 score")
+                    print("You LOSE game")
                     break
                 self.__player.reduce_score(25)
                 print("Game is started")

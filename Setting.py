@@ -1,4 +1,4 @@
-SUITES = ["Spade", "Club", "Diamond", "Heart"]
+SUITES = [ "Heart", "Diamond", "Club", "Spade"]
 GROUPS = [
         "Ace", "2", "3", 
         "4","5", "6", 
