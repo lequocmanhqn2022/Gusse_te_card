@@ -5,7 +5,7 @@ GROUPS = [
         "7", "8","9", 
         "10", "J", "Q", "K"
         ]
-BIGGEST_CARD = [("", "Black Joker"), ("", "Red Joker")]
+BIGGEST_CARD = [("Black", "Joker"), ("Red", "Joker")]
       
 REWARD = 20
 JOIN_FEE = 25

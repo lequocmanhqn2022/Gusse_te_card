@@ -1,60 +1,71 @@
-from CardSet import *
+from Deck import *
 from Card import *
-
+from Setting import *
 
 class GameController():
     def __init__(self, player):
         self.__totalReward = 0
         self.__player = player
-        self.__cardSet = CardSet()
+        self.__round = 1
+        self.__deck = Deck()
 
     def main_menu(self):
-        while True:
+        # Rule
+        while True and self.__player.get_score() > LOSE_CONDITION and self.__player.get_score() <= WIN_CONDITION:
             print(f"Your score: {self.__player.get_score()}")
-            decision = input('Do you want start game "yes" or "no" ? (y/n) : ')
+            decision = input(f'Do you want by  start game "yes" or "no" ? (y/n) : ')
             if decision == "y":
-                if(self.__player.get_score() < 25):
-                    print("You LOSE game")
-                    break
-                self.__player.reduce_score(25)
+                self.__player.reduce_score(JOIN_FEE)
                 print("Game is started")
                 self.start()
             elif decision == "n":
                 break
+        # End game
+        if self.__player.get_score() < LOSE_CONDITION:
+            print(f"You LOSE game!!!")
+        elif self.__player.get_score() >= WIN_CONDITION:
+            print(f"You WIN game with {self.__player.get_score()} reward!!!")
 
     def start(self):
         while True:
-            house_card = self.__cardSet.draw_card()
+            # Round
+            print(f"\t\t\t\tROUND : {self.__round.__str__()}")
+            # Playing process
+            house_card = self.__deck.draw_card()
             print("House's card is: " + house_card.__str__())
             playerGuess = self.__player.guess(house_card)
-            self.__player.set_card(self.__cardSet.draw_card())
+            self.__player.set_card(self.__deck.draw_card())
             result = Card.compare_card(self.__player.get_card(), house_card)
+            print("You's card is: " + self.__player.get_card().__str__())
+            # When WIN
             if((playerGuess == "greater" and result) or (playerGuess == "less" and not result)):
-                print("You's card is: " + self.__player.get_card().__str__())
-                print("You win!!!")
-                # when win
+                print("\t\t\t\tYou win!!!")
                 if(self.__totalReward):
                     self.__totalReward *= 2
                 else:
-                    self.__totalReward = 20
-                print(self.__totalReward)
-                if(self.__totalReward >= 1000):
-                    self.__player.plus_score(1000)
-                    self.reset()
-                    print("You win game with 1000 reward!!!")
+                    self.__totalReward = REWARD
+
+                if(self.__totalReward >= WIN_CONDITION):
+                    self.__player.plus_score(self.__totalReward)
                     break
+                # decision "continue" or "stop"
                 decision = input(f'Current total reward: {self.__totalReward}, Do you want to "continue" or "stop" ? : ')
                 if(decision == "stop"):
                     self.__player.plus_score(self.__totalReward)
-                    self.reset()
+                    self.reset_game()
                     break
+                self.__round += 1
+                self.reset_deck()
+            # When LOSE
             else:
-                print("You's card is: " + self.__player.get_card().__str__())
-                print("You lose!!!")
-                self.reset()
+                print(f"\t\t\tYou LOSE game with {self.__player.get_score()} reward!!!\n\n")
+                self.reset_game()
                 break
 
-    def reset(self):
-        self.__cardSet = CardSet()
+    def reset_game(self):
+        self.__deck = Deck()
+        self.__round = 1
         self.__totalReward = 0
     
+    def reset_deck(self):
+        self.__deck = Deck()
