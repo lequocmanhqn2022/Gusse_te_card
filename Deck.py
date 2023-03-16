@@ -22,6 +22,11 @@ class Deck():
         for suite, gruop in BIGGEST_CARD:
             self.__new_deck.append(Card(suite, gruop, i))
             i += 1
+
+    def get_card_by(self, suite, group):
+        for card in self.__new_deck:
+            if card.get_suite() == suite and card.get_group() == group:
+                return card
             
-    # def get_deck(self):
-    #     return self.__new_deck
+    def get_deck(self):
+        return self.__new_deck

@@ -18,5 +18,6 @@ class Card():
     
     def compare_card(card1, card2):
         return card1.get_compare_value() > card2.get_compare_value()
+    
 # Static method
 Card.compare_card = staticmethod(Card.compare_card)

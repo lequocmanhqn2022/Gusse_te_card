@@ -6,9 +6,15 @@ class Player():
         self.__card = None
 
     def guess(self, house_card):
-        guess = input(f"{self.__name}, do you think your card is greater or less "
-                      f"than {house_card.get_group()} {house_card.get_suite()}? (Enter 'greater' or 'less'): ")
-        return guess
+         while True:
+            try:
+                guess = input(f"{self.__name}, do you think your card is greater or less "
+                              f"than {house_card.get_group()} {house_card.get_suite()}? (Enter 'greater' or 'less'): ")
+                if guess not in ['greater', 'less']:
+                    raise ValueError("Invalid input! Please enter 'greater' or 'less'")
+                return guess
+            except ValueError as error:
+                print(error)
     
     def set_card(self, card):
         self.__card = card
