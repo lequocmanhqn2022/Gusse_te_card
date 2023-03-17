@@ -1,10 +1,11 @@
 from unittest.mock import MagicMock
 import unittest
-from GameController import GameController
-from Player import Player
-from Card import Card
-from Deck import Deck
-from Setting import *
+import builtins
+from game_controller import GameController
+from player import Player
+from card import Card
+from deck import Deck
+from setting import *
 
 class Test(unittest.TestCase):
 
@@ -25,8 +26,11 @@ class Test(unittest.TestCase):
     def game_controller(self):
         player  = Player("Manh",30)
         return GameController(player)
-    
+   
     def test_game_round_win(self):
+        input_values = ['y', 'coutinue']
+        mock_input = MagicMock(side_effect=input_values)
+        builtins.input = mock_input
         print("\n\t\t\tTest game WIN")
         game_controller = self.game_controller()
         game_controller._GameController__deck.draw_card = MagicMock(return_value= ("Hearts", "5"))
@@ -42,6 +46,9 @@ class Test(unittest.TestCase):
         print("PASSED")
 
     def test_game_round_lose(self):
+        input_values = 'y'
+        mock_input = MagicMock(side_effect=input_values)
+        builtins.input = mock_input
         print("\n\t\t\tTest game LOSE")
         game_controller = self.game_controller()
         game_controller._GameController__deck.draw_card = MagicMock(return_value= ("Hearts", "5"))
@@ -54,6 +61,23 @@ class Test(unittest.TestCase):
         self.assertEqual(game_controller._GameController__round, 1)
         self.assertEqual(game_controller._GameController__totalReward, 0)
         print("PASSED")
+
+    def test_new_deck(self):
+        input_values = ['y', 'countinue']
+        mock_input = MagicMock(side_effect=input_values)
+        builtins.input = mock_input
+        print("\n\t\t\tTest new Deck")
+        game_controller = self.game_controller()
+        game_controller._GameController__deck.draw_card = MagicMock(return_value= ("Hearts", "5"))
+        game_controller._GameController__player.guess = MagicMock(return_value="greater")
+        game_controller._GameController__player.get_card = MagicMock(return_value=("Diamonds", "10"))
+        game_controller._GameController__totalReward = 250
+        Card.compare_card = MagicMock(return_value=True)
+        print(game_controller._GameController__deck.get_deck().__len__())
+
+        game_controller.main_menu()
+        print(game_controller._GameController__deck.get_deck().__len__())
+        self.assertEqual(game_controller._GameController__deck.get_deck().__len__(), 54)
 
 
 if __name__ == '__main__':

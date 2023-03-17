@@ -1,5 +1,5 @@
-from GameController import *
-from Player import *
+from game_controller import *
+from player import *
 
 def main():
     while True:

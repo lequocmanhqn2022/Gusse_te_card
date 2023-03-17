@@ -1,6 +1,6 @@
-from Deck import *
-from Card import *
-from Setting import *
+from deck import *
+from card import *
+from setting import *
 
 class GameController():
     def __init__(self, player):
